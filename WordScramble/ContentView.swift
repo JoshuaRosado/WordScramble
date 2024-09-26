@@ -38,6 +38,12 @@ struct ContentView: View {
                     
                 }
             }
+            .toolbar{
+                ToolbarItemGroup(placement:.automatic ){
+                    Button("Restart", action: startGame)
+                }
+            }
+            
             .navigationTitle(rootWord)
             .onSubmit(addNewWord)
             .onAppear(perform: startGame)
@@ -50,7 +56,10 @@ struct ContentView: View {
             }
         }
         
+        
+        
     }
+    
     
     func addNewWord() {
         
@@ -76,6 +85,16 @@ struct ContentView: View {
             return
         }
         
+        guard wordLength(word: answer) else {
+            wordError(title: "Too short", message: "Word needs to be longer than 3 characters")
+            return
+        }
+        
+        guard wordValidation(word: answer) else {
+            wordError(title: "Not allowed", message: "Using the same word is not allowed")
+            return
+        }
+        
         withAnimation{
             usedWords.insert(answer, at: 0)
         }
@@ -83,6 +102,7 @@ struct ContentView: View {
     }
     
     func startGame() {
+        usedWords.removeAll()
         if let startWordsURL = Bundle.main.url(forResource: "start", withExtension: "txt")
         {
             if let startWords = try? String(contentsOf: startWordsURL, encoding: .ascii) {
@@ -134,6 +154,21 @@ struct ContentView: View {
         errorMessage = message
         showingError = true
         
+    }
+    
+    func wordLength(word: String) -> Bool {
+        if word.count < 3{
+            return false
+        }
+        return true
+    }
+    
+    func wordValidation(word: String) -> Bool {
+        let tempWord = rootWord
+        if word.hasPrefix(tempWord){
+            return false
+        }
+        return true
     }
     
 
