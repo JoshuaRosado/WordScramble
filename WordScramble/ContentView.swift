@@ -15,6 +15,7 @@ struct ContentView: View {
     @State private var errorTitle = ""
     @State private var errorMessage = ""
     @State private var showingError = false
+    @State private var score = 0
     
     
     var body: some View {
@@ -37,6 +38,7 @@ struct ContentView: View {
                     }
                     
                 }
+
             }
             .toolbar{
                 ToolbarItemGroup(placement:.automatic ){
@@ -54,7 +56,20 @@ struct ContentView: View {
             } message: {
                 Text(errorMessage)
             }
+
         }
+        ZStack{
+            RadialGradient(colors: [.green.opacity(0.3)], center: .center, startRadius: 100, endRadius: 10)
+                .ignoresSafeArea()
+            Text("Score : \(score)")
+                .font(.title).bold().fontDesign(.rounded)
+                .padding().foregroundStyle(.secondary)
+
+            
+        }
+        .frame(height: 50)
+        
+        
         
         
         
@@ -95,14 +110,22 @@ struct ContentView: View {
             return
         }
         
+        
+        
+        
+        
         withAnimation{
             usedWords.insert(answer, at: 0)
+            score += answer.count
         }
+        
+        
         newWord = ""
     }
     
     func startGame() {
         usedWords.removeAll()
+        score = 0
         if let startWordsURL = Bundle.main.url(forResource: "start", withExtension: "txt")
         {
             if let startWords = try? String(contentsOf: startWordsURL, encoding: .ascii) {
@@ -118,6 +141,9 @@ struct ContentView: View {
     
     // ============= VALIDATING WORDS
     
+    // ADDING SCORE
+    
+
     // CHECK IF WORD IS ORIGINAL
     func isOriginal(word: String) -> Bool {
         !usedWords.contains(word)
